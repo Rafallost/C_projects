@@ -19,7 +19,7 @@ typedef struct {
 typedef struct
 {
 
-	char tytul[ROZMIAR];
+	char Title[ROZMIAR];
 	int rok_wydania;
 	int ISBN;
 	int ilosc_stron;
@@ -63,16 +63,17 @@ int main() {
 	int a = 1;
 	
 	while(a){	
-		puts("\nProsze wybrac operacje");
-		puts("1 : Dodawanie nowej ksiazki do zbioru");
-		puts("2 : Usuwanie ksiazki ze zbioru");
-		puts("3 : Wyświetlenie calego zbioru w kolejnosci alfabetycznej");
-		puts("4 : Wyświetlenie calego zbioru rocznikowej");
-		puts("5 : Spis tresci");
-		puts("6 : Wysweitlanie z pliku");
-		puts("7 : zapis do pliku");
-		puts("Podaj jakakolwiek litere zeby wylaczyc");
-		puts("Uwaga: Wielkosc liter ma znaczenie.");
+		puts("\nSelect option");
+		puts("1 : Adding a new book to the collection");
+		puts("2 : Removing a book from the collection");
+		puts("3 : Display the entire collection in alphabetical order");
+		puts("4 : Display of the entire vintage collection");
+		puts("5 : Contents");
+		puts("6 : Displaying from a file");
+		puts("7 : save");
+		puts("\tNotes:");
+		puts("--Enter any letter to disable");
+		puts("--Letters are case-sensitive");
 		char c;
 		int num;
 		scanf(" %c", &c);
@@ -82,7 +83,7 @@ int main() {
 		case '1':
 		ilosc_ksia++;
 			ksiazki = (Ksiazka*)realloc(ksiazki,sizeof(Ksiazka)*ilosc_ksia);
-			puts("Wybierz wydawnictwo");
+			puts("Select a publisher");
 			puts("1: vulcan");
 			puts("2: wsip");
 				scanf("%d", &num);
@@ -92,14 +93,14 @@ int main() {
 		case '2':
 		ilosc_ksia--;
 			Ksiazka *temp = (Ksiazka*)malloc(sizeof(Ksiazka)*ilosc_ksia);
-			puts("Podaj ISBN, ktory chcesz usunac");	
+			puts("Enter the ISBN you want to delete");	
 			int ISBN;
 			scanf("%d",&ISBN);
 			usuwanie(ksiazki,temp,ilosc_ksia,ISBN);
 			free(temp);
 		break;
 		case '3': 
-			puts("Uwaga: Ksiazki wprowadzone od duzej litery maja pierwszenstwo wyswietlania");
+			puts("Note: Books entered with a capital letter have priority in displaying");
 			sortowanie_alfabetycznie(ksiazki,ilosc_ksia);
 			wyswietlanie(ksiazki,ilosc_ksia);
 		break;
@@ -116,7 +117,7 @@ int main() {
 				spis[i] = malloc(2 * sizeof(Ksiazka)*ilosc_ksia);
 				spis[i][0] = ksiazki[i];
 				spis[i][1] = ksiazki[i];
-				printf("Na miejscu %d  , ISBN %d: %s\n",i,spis[i][1].ISBN,spis[i][1].tytul);
+				printf("At location %d  , ISBN %d: %s\n",i,spis[i][1].ISBN,spis[i][1].Title);
 			} 			
 			
 		break;
@@ -132,10 +133,9 @@ int main() {
 			break;
 		}
 	}
-	return 0;
 
-	
 	free(ksiazki);
+	return 0;
 }
 
 void wpisz(char* tab) {
@@ -160,7 +160,6 @@ int ilosc_ksiazek() {
 	int i = 0;
 	while (fgets(line,MAX_LINE_LENGTH,ptr))
 		i++;
-
 	fclose(ptr);
 	int wynik = i / 7;
 	return wynik;
@@ -184,7 +183,7 @@ void uzupelnij(Ksiazka* tablica) {
 
 		switch (i)
 		{
-		case 0: strcpy(tablica[y].tytul, line); break;
+		case 0: strcpy(tablica[y].Title, line); break;
 		case 1: tablica[y].rok_wydania = atoi(line); break;
 		case 2: tablica[y].ISBN = atoi(line); break;
 		case 3: tablica[y].ilosc_stron = atoi(line); break;
@@ -228,14 +227,14 @@ void sortowanie_alfabetycznie(Ksiazka *ksia,int ilosc_ksiazek){
 	for (int i = 0; i < ilosc_ksiazek; i++) {
 
 		for (int k = i + 1; k < ilosc_ksiazek; k++) {
-			for (int y = 0; y < strlen(ksia[i].tytul)-1; y++) {
+			for (int y = 0; y < strlen(ksia[i].Title)-1; y++) {
 			
-				if(ksia[i].tytul[y] < ksia[k].tytul[y])
+				if(ksia[i].Title[y] < ksia[k].Title[y])
 				{
 					break;
 					
 				}
-				else if(ksia[i].tytul[y] > ksia[k].tytul[y])
+				else if(ksia[i].Title[y] > ksia[k].Title[y])
 				{
 
 					Ksiazka ks = ksia[i];
@@ -251,27 +250,26 @@ void sortowanie_alfabetycznie(Ksiazka *ksia,int ilosc_ksiazek){
 
 void wyswietlanie_z_pliku() {
 
-	char line[MAX_LINE_LENGTH];
-
 	FILE* ptr = fopen("ksiazki.txt", "r");
 
+	char line[MAX_LINE_LENGTH];
+	puts("wlaczylem sie");
 	int i = 0;
-	while (fgets(line,MAX_LINE_LENGTH,ptr)){
-	
+	while (fgets(line,MAX_LINE_LENGTH,ptr))	{
+
 		if (i == 7) i = 0;
 		
 		switch(i){
-		case 0:printf("***Tytul: %s\n",line);break;
-		case 1:printf("Rok wydania: %s",line);break;
+		case 0:printf("***Title: %s\n",line);break;
+		case 1:printf("Publication date: %s",line);break;
 		case 2:printf("ISBN: %s",line);break;
-		case 3:printf("Ilosc stron: %s",line);break;
-		case 4:printf("Srednia ocena czytelnikow: %s",line);break;
-		case 5:printf("cena: %s",line);break;
+		case 3:printf("Number of pages: %s",line);break;
+		case 4:printf("Average reader rating: %s",line);break;
+		case 5:printf("Price: %s",line);break;
 		case 6:printf("Nazwa wydawnictwa: %s\n",line);break;
 		}
 	i++;
 	}
-
 	fclose(ptr);
 }
 
@@ -280,45 +278,45 @@ void wyswietlanie(Ksiazka* ksia,int ilosc_ksiazek) {
 
 	for (int i = 0; i < ilosc_ksiazek; i++) {
 
-		printf("***TYTUL: %s", ksia[i].tytul);
+		printf("***Title: %s", ksia[i].Title);
 
-			printf("\nRok wydania: %d\n", ksia[i].rok_wydania);
+			printf("\nPublication date: %d\n", ksia[i].rok_wydania);
 			printf("ISBN: %d\n", ksia[i].ISBN);
-			printf("Ilosc stron: %d\n", ksia[i].ilosc_stron);
-			printf("Srednia ocena czytelnikow: %0.2lf\n", ksia[i].srednia_ocena_czytelnikow);
-			printf("cena: %0.2lf\n", ksia[i].cena);
-			printf("Nazwa wydawnictwa: %s\n", ksia[i].wyd.nazwa);
+			printf("Number of pages: %d\n", ksia[i].ilosc_stron);
+			printf("Average reader rating: %0.2lf\n", ksia[i].srednia_ocena_czytelnikow);
+			printf("Price: %0.2lf\n", ksia[i].cena);
+			printf("Name of the publisher: %s\n", ksia[i].wyd.nazwa);
 	}
 }
 
 void dodawanie(Wydawnictwo wydawnictwo,Ksiazka* ksia,int ilosc_ksiazek) {
 	
 	int ISBN;
-	char tytul[ROZMIAR];
+	char Title[ROZMIAR];
 	
-	puts("podaj tytul:");
-	wpisz(tytul);
-		strcpy(ksia[ilosc_ksiazek-1].tytul,tytul);
-	puts("podaj rok_wydania:");
+	puts("Enter Title:");
+	wpisz(Title);
+		strcpy(ksia[ilosc_ksiazek-1].Title,Title);
+	puts("Enter rok_wydania:");
 		scanf("%d", &ksia[ilosc_ksiazek-1].rok_wydania);
-	puts("podaj ISBN:");
+	puts("Enter ISBN:");
 		scanf("%d", &ISBN);
 		
 	for(int i = 0; i<ilosc_ksiazek; ++i){	
 		if(ISBN==ksia[i].ISBN)
 		{
-			puts("Kod ISBN nie moze sie powtarzac, prosze podac inny");	
+			puts("The ISBN code cannot be repeated, please enter a different one");	
 			scanf("%d", &ISBN);
 			i=-1;
 		}
 	}
 		ksia[ilosc_ksiazek-1].ISBN = ISBN;
 		
-	puts("podaj ilosc_stron:");
+	puts("Enter number of pages:");
 		scanf("%d", &ksia[ilosc_ksiazek-1].ilosc_stron);
-	puts("podaj srednia ocene czytelnikow:");
+	puts("Enter average reader rating:");
 		scanf("%lf", &ksia[ilosc_ksiazek-1].srednia_ocena_czytelnikow);
-	puts("podaj cene:");
+	puts("Enter price:");
 		scanf("%lf", &ksia[ilosc_ksiazek-1].cena);
 	strcpy(ksia[ilosc_ksiazek-1].wyd.nazwa, wydawnictwo.nazwa);
 
@@ -342,24 +340,21 @@ void usuwanie(Ksiazka* ksia,Ksiazka* temp,int ilosc_ksiazek, int ISBN){
 }
 
 void zapis_do_pliku(Ksiazka* ksia,int ilosc_ksiazek){
-
-	FILE* plik = fopen("ksiazki.txt","w+");
-	
+	FILE* ptr = fopen("ksiazki.txt","w+");
 	for(int i = 0; i<ilosc_ksiazek;i++){
-		fprintf(plik, "%s", ksia[i].tytul); 				
+		fprintf(ptr, "%s", ksia[i].Title); 				
 		
-		fprintf(plik, "%d", ksia[i].rok_wydania); 			fprintf(plik, "\n");
+		fprintf(ptr, "%d", ksia[i].rok_wydania); 					fprintf(ptr, "\n");
 			
-		fprintf(plik, "%d", ksia[i].ISBN); 				fprintf(plik, "\n");
+		fprintf(ptr, "%d", ksia[i].ISBN); 							fprintf(ptr, "\n");
 	
-		fprintf(plik, "%d", ksia[i].ilosc_stron); 			fprintf(plik, "\n");
+		fprintf(ptr, "%d", ksia[i].ilosc_stron); 					fprintf(ptr, "\n");
 	
-		fprintf(plik, "%lf", ksia[i].srednia_ocena_czytelnikow); 	fprintf(plik, "\n");
+		fprintf(ptr, "%lf", ksia[i].srednia_ocena_czytelnikow); 	fprintf(ptr, "\n");
 	
-		fprintf(plik, "%lf", ksia[i].cena); 				fprintf(plik, "\n");
+		fprintf(ptr, "%lf", ksia[i].cena); 							fprintf(ptr, "\n");
 
-		fprintf(plik, "%s", ksia[i].wyd.nazwa); 			
+		fprintf(ptr, "%s", ksia[i].wyd.nazwa); 			
 	}
-	fclose(plik);
-
+	fclose(ptr);
 }
