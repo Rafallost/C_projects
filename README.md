@@ -1,4 +1,5 @@
 # C_projects
+**You can use command "sudo su" on the beginning and avoid writing it before every command (if you are using command line ofcourse)**
 1.powers.c
 My version of atoi and some calculating powers.
 
